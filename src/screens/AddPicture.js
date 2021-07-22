@@ -1,14 +1,23 @@
 import React from "react";
 import {View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Dimensions, Platform, ScrollView, Alert} from "react-native";
 import {launchCamera, launchImageLibrary} from "react-native-image-picker";
+import { connect } from "react-redux";
+import { addPost } from "../store/Actions/posts";
 
-export default class AddImage extends React.Component {
+const noUser = "Você precisa ter uma conta para poder compartilhar uma foto";
+
+class AddPicture extends React.Component {
   state = {
     photo: {},
     comment: '',
   }
 
   pickImage = () => {
+
+    if (!this.props.name) {
+      return Alert.alert("Falha!", noUser);
+    }
+
     launchImageLibrary({
       title: 'Escolha a imagem',
       mediaType: 'photo',
@@ -23,6 +32,11 @@ export default class AddImage extends React.Component {
   }
 
   takeImage = () => {
+
+    if (!this.props.name) {
+      return Alert.alert("Falha!", noUser);
+    }
+
     launchCamera({
       title: 'Escolha a imagem',
       mediaType: 'photo',
@@ -37,7 +51,23 @@ export default class AddImage extends React.Component {
   }
 
   save = async () => {
-    Alert.alert("Imagem adicionada", this.state.comment);
+
+    if (!this.props.name) {
+      return Alert.alert("Falha!", noUser);
+    }
+
+    this.props.onAddPost({
+      id: Math.random(),
+      nickname: this.props.name,
+      email: this.props.email,
+      image: this.state.photo,
+      comments: [{
+        nickname: this.props.name,
+        comment: this.state.comment
+      }]
+    });
+
+    this.props.navigation.navigate('Feed');
   }
 
   render() {
@@ -65,6 +95,7 @@ export default class AddImage extends React.Component {
             style={styles.input}
             value={this.state.comment}
             onChangeText={comment => this.setState({ comment })}
+            editable={!!this.props.name}
           />
 
           <TouchableOpacity style={styles.button} onPress={this.save}>
@@ -118,3 +149,18 @@ const styles = StyleSheet.create({
     width: '90%'
   }
 });
+
+const mapStateToProps = ({user}) => {
+  return {
+    email: user.email,
+    name: user.name
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onAddPost: post => dispatch(addPost(post))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddPicture);

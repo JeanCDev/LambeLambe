@@ -6,13 +6,13 @@ import { login } from "../store/Actions/user";
 class Login extends React.Component {
   state = {
     name: "Jean Carlos",
-    email: '',
-    password: ''
+    email: 'jeangames15@gmail.com',
+    password: '12345678'
   }
 
-  logIn = () => {
-    this.props.onLogin({ ...this.state });
-    this.props.navigation.navigate('Profile');
+  logIn = async () => {
+    await this.props.onLogin({ ...this.state });
+    this.props.navigation.navigate("Profile");
   }
 
   signIn = () => {
@@ -76,10 +76,16 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = ({user}) => {
+  return {
+    isLoading: user.isLoading
+  }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     onLogin: user => dispatch(login(user))
   }
 }
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

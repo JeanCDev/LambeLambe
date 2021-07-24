@@ -1,15 +1,24 @@
 import React from "react";
 import {View, Text, StyleSheet, TouchableOpacity, TextInput} from "react-native";
+import { connect } from "react-redux";
+import { createUser } from "../store/Actions/user";
 
-export default class Register extends React.Component {
+class Register extends React.Component {
   state = {
     name: '',
     email: '',
-    password: '',
-    confirmPassword: '',
+    password: ''
   }
 
-  signUp = () => {
+  register = async () => {
+    await this.props.onCreateUser(this.state);
+
+    this.setState({
+      name: '',
+      email: '',
+      password: ''
+    });
+
     this.props.navigation.navigate('Profile');
   }
 
@@ -40,15 +49,9 @@ export default class Register extends React.Component {
             onChangeText={password => this.setState({password})}
           />
 
-          <TextInput
-            placeholder="Confirme a senha"
-            style={styles.input}
-            secureTextEntry
-            value={this.state.confirmPassword}
-            onChangeText={confirmPassword => this.setState({confirmPassword})}
-          />
-
-          <TouchableOpacity style={styles.button} onPress={this.signUp}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.register}>
             <Text style={styles.buttonText}>Registrar-se</Text>
           </TouchableOpacity>
         </View>
@@ -80,3 +83,11 @@ const styles = StyleSheet.create({
     color: '#fff'
   }
 });
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onCreateUser: user => dispatch(createUser(user))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(Register);

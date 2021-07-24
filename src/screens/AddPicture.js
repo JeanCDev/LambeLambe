@@ -56,7 +56,7 @@ class AddPicture extends React.Component {
       return Alert.alert("Falha!", noUser);
     }
 
-    this.props.onAddPost({
+    await this.props.onAddPost({
       id: Math.random(),
       nickname: this.props.name,
       email: this.props.email,
@@ -67,7 +67,12 @@ class AddPicture extends React.Component {
       }]
     });
 
-    this.props.navigation.navigate('Feed');
+    this.setState({
+      image: null,
+      comment: ''
+    });
+
+    this.props.navigation.navigate("Feed");
   }
 
   render() {
@@ -98,7 +103,10 @@ class AddPicture extends React.Component {
             editable={!!this.props.name}
           />
 
-          <TouchableOpacity style={styles.button} onPress={this.save}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.save}
+          >
             <Text style={styles.buttonText}>Salvar</Text>
           </TouchableOpacity>
 
@@ -150,7 +158,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = ({user}) => {
+const mapStateToProps = ({user, posts}) => {
   return {
     email: user.email,
     name: user.name

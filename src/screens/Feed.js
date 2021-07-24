@@ -3,23 +3,12 @@ import { View, StyleSheet, FlatList } from 'react-native';
 import Header from '../components/Header';
 import Post from '../components/Post';
 import { connect } from "react-redux";
+import { fetchPosts } from '../store/Actions/posts';
 
 class Feed extends React.Component {
 
-  state = {
-    posts: [{
-      id: Math.random(),
-      nickname: 'Jean',
-      email: 'jean@gamil.com',
-      image: require('../../assets/img/gate.jpg'),
-      comments: [{nickname: 'John Doe', comment: "Loko"}, {nickname: 'John Doe', comment: "Loko"}]
-    },{
-      id: Math.random(),
-      nickname: 'Pedro',
-      email: 'jean@gamil.com',
-      image: require('../../assets/img/fence.jpg'),
-      comments: [{nickname: 'John Doe', comment: "Loko"}]
-    }]
+  componentDidMount = () => {
+    this.props.onFetchPosts();
   }
 
   render() {
@@ -54,4 +43,10 @@ const mapStateToProps = ({posts}) => {
   }
 }
 
-export default connect(mapStateToProps, null)(Feed);
+const mapDispatchToProps = dispatch => {
+  return {
+    onFetchPosts: () => dispatch(fetchPosts())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, null)(Feed);
